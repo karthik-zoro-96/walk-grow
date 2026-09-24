@@ -1,6 +1,6 @@
 import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useSettingsStore } from '../state/useSettingsStore';
 import { colors } from '../theme/colors';
@@ -15,12 +15,16 @@ export default function Index() {
   }, [hydrate]);
 
   if (!hydrated) {
-    return <View style={styles.container} />;
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
   }
 
   return <Redirect href={onboardingCompleted ? '/(tabs)' : '/(onboarding)/welcome'} />;
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
 });

@@ -56,7 +56,12 @@ export default function HomeGardenScreen() {
   }
 
   const stage = gardenState?.currentStage ?? 0;
-  const showManualEntry = MANUAL_ENTRY_STATES.includes(permissionState);
+  // HealthKit in particular can't reliably confirm grant/deny, so also fall back to manual
+  // entry whenever we simply have no step data yet and aren't in a definitively granted state
+  // (e.g. the user skipped the permission step during onboarding on iOS).
+  const showManualEntry =
+    MANUAL_ENTRY_STATES.includes(permissionState) ||
+    (permissionState !== 'granted' && todaySteps === null);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
