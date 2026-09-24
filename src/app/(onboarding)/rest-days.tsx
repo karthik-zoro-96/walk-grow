@@ -10,9 +10,8 @@ export default function RestDaySetupScreen() {
   const restDays = useSettingsStore((s) => s.settings.restDays);
   const updateSettings = useSettingsStore((s) => s.updateSettings);
 
-  function finish() {
-    updateSettings({ onboardingCompleted: true });
-    router.replace('/(tabs)');
+  function next() {
+    router.push('/(onboarding)/health-permission');
   }
 
   return (
@@ -30,8 +29,8 @@ export default function RestDaySetupScreen() {
           />
         </View>
       </View>
-      <Pressable style={styles.button} onPress={finish} accessibilityRole="button">
-        <Text style={styles.buttonText}>Finish</Text>
+      <Pressable style={styles.button} onPress={next} accessibilityRole="button">
+        <Text style={styles.buttonText}>Next</Text>
       </Pressable>
     </View>
   );

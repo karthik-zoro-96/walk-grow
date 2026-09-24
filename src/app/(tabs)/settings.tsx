@@ -1,8 +1,12 @@
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { PermissionStatusCard } from '../../components/shared/PermissionStatusCard';
 import { StepGoalInput } from '../../components/shared/StepGoalInput';
 import { WeekdaySelector } from '../../components/shared/WeekdaySelector';
+import type { PermissionState } from '../../health/types';
+import { getHealthPermissionState, requestHealthPermission } from '../../services/syncService';
 import { useSettingsStore } from '../../state/useSettingsStore';
 import { deleteAllDayRecords } from '../../storage/dayRecordsRepo';
 import { deleteGardenState } from '../../storage/gardenStateRepo';
@@ -13,6 +17,23 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const settings = useSettingsStore((s) => s.settings);
   const updateSettings = useSettingsStore((s) => s.updateSettings);
+  const [permissionState, setPermissionState] = useState<PermissionState>('checking');
+
+  const refreshPermissionState = useCallback(() => {
+    getHealthPermissionState()
+      .then(setPermissionState)
+      .catch(() => setPermissionState('unavailable'));
+  }, []);
+
+  useEffect(() => {
+    refreshPermissionState();
+  }, [refreshPermissionState]);
+
+  function handleRequestPermission() {
+    requestHealthPermission()
+      .then(setPermissionState)
+      .catch(() => setPermissionState('unavailable'));
+  }
 
   function confirmResetGarden() {
     Alert.alert(
@@ -52,6 +73,14 @@ export default function SettingsScreen() {
         <WeekdaySelector
           selected={settings.restDays}
           onChange={(days) => updateSettings({ restDays: days })}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Steps source</Text>
+        <PermissionStatusCard
+          state={permissionState}
+          onRequestPermission={handleRequestPermission}
         />
       </View>
 

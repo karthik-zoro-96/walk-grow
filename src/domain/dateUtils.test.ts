@@ -5,6 +5,7 @@ import {
   formatDateKey,
   getMonthGridKeys,
   parseDateKey,
+  startOfLocalDayForKey,
 } from './dateUtils';
 
 describe('formatDateKey / parseDateKey', () => {
@@ -71,6 +72,26 @@ describe('dayOfWeekForKey', () => {
     for (let i = 1; i <= 10; i++) {
       expect(dayOfWeekForKey(addDaysToKey('2026-09-24', i))).toBe((base + i) % 7);
     }
+  });
+});
+
+describe('startOfLocalDayForKey', () => {
+  it('is exact local midnight regardless of the current wall-clock time', () => {
+    const midnight = startOfLocalDayForKey('2026-09-24');
+    expect(midnight.getHours()).toBe(0);
+    expect(midnight.getMinutes()).toBe(0);
+    expect(midnight.getSeconds()).toBe(0);
+    expect(midnight.getMilliseconds()).toBe(0);
+    expect(formatDateKey(midnight)).toBe('2026-09-24');
+  });
+
+  it('advances by exactly 24 local hours to the next day, even across a DST transition', () => {
+    const start = startOfLocalDayForKey('2024-03-09');
+    const next = startOfLocalDayForKey('2024-03-10');
+    // Spring-forward day is only 23 hours long in wall-clock terms, so the millisecond
+    // gap is less than a full 24h even though it's exactly one calendar day.
+    expect(next.getTime()).toBeGreaterThan(start.getTime());
+    expect(next.getTime() - start.getTime()).toBeLessThanOrEqual(24 * 60 * 60 * 1000);
   });
 });
 

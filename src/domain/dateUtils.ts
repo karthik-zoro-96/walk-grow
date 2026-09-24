@@ -6,6 +6,7 @@ import {
   format,
   getDay,
   parse,
+  startOfDay,
   startOfWeek,
 } from 'date-fns';
 
@@ -31,6 +32,14 @@ export function addDaysToKey(dateKey: string, amount: number): string {
 /** 0 = Sunday .. 6 = Saturday, matching UserSettings.restDays. */
 export function dayOfWeekForKey(dateKey: string): number {
   return getDay(parseDateKey(dateKey));
+}
+
+/**
+ * True local midnight for a date key. Unlike parseDateKey (which keeps the current
+ * wall-clock time), this is exact and safe to use as a health-query range boundary.
+ */
+export function startOfLocalDayForKey(dateKey: string): Date {
+  return startOfDay(parseDateKey(dateKey));
 }
 
 export function compareDateKeys(a: string, b: string): number {

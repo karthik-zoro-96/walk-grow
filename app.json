@@ -8,7 +8,24 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "plugins": [
-      ["expo-router", { "root": "./src/app" }]
+      ["expo-router", { "root": "./src/app" }],
+      [
+        "react-native-health",
+        {
+          "healthSharePermission": "Steps Garden reads your daily step count to grow your plant."
+        }
+      ],
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "minSdkVersion": 26
+          }
+        }
+      ]
     ],
     "ios": {
       "supportsTablet": true,
@@ -16,6 +33,7 @@
     },
     "android": {
       "package": "com.stepsgarden.app",
+      "permissions": ["android.permission.health.READ_STEPS"],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
